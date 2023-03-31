@@ -158,7 +158,12 @@ impl Module {
             .await
             .context("failed to instantiate module")?;
 
-        // TODO: call start etc.
+        if let Ok(func) = instance.get_typed_func(&mut store, "_start") {
+            let () = func
+                .call_async(&mut store, ())
+                .await
+                .context("failed to call `_start`")?;
+        }
 
         let func = instance
             .get_typed_func(&mut store, "__guest_call")
